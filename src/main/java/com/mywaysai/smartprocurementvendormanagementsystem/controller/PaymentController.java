@@ -37,7 +37,10 @@ public class PaymentController {
 
             Payment payment = new Payment();
             payment.setInvoice(invoice);
+<<<<<<< HEAD
             payment.setPaidAmount(request.getPaidAmount());
+=======
+>>>>>>> 2cc9516b2cdc886933c194a22df3e49ba0bf40af
             payment.setPaymentDate(request.getPaymentDate());
             payment.setPaymentMode(request.getPaymentMode());
             payment.setStatus(request.getStatus());
