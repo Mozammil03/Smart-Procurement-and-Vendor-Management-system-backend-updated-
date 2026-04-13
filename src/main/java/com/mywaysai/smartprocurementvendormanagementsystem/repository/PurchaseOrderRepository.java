@@ -9,6 +9,8 @@ import java.util.List;
 public interface PurchaseOrderRepository extends JpaRepository<PurchaseOrder, Long> {
     List<PurchaseOrder> findByRequisitionId(Long requisitionId);
 
+    List<PurchaseOrder> findByVendorId(Long vendorId);
+
     @Query("SELECT p FROM PurchaseOrder p WHERE " +
            "LOWER(p.poNumber) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
            "LOWER(p.vendor.companyName) LIKE LOWER(CONCAT('%', :keyword, '%'))")

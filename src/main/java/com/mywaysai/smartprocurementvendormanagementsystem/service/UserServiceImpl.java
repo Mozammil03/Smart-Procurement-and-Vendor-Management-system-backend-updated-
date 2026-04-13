@@ -110,15 +110,8 @@ public class UserServiceImpl implements UserService {
 
             if (optionalVendor.isPresent()) {
                 Vendor vendor = optionalVendor.get();
-
-                if (!vendor.isApproved()) {
-                    throw new RuntimeException("Vendor not approved by admin yet");
-                }
-
                 vendorId = vendor.getId();
             }
-
-            // If NOT present → it means admin created vendor user, so login is allowed
         }
 
         return new LoginResponse(

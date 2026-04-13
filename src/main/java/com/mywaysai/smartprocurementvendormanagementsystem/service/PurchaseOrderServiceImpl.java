@@ -45,6 +45,11 @@ public class PurchaseOrderServiceImpl implements PurchaseOrderService {
         return poRepository.findAll();
     }
 
+    @Override
+    public List<PurchaseOrder> getByVendorId(Long vendorId) {
+        return poRepository.findByVendorId(vendorId);
+    }
+
     public Optional<PurchaseOrder> getById(Long id) {
         return poRepository.findById(id);
     }

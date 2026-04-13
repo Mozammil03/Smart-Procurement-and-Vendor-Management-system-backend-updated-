@@ -26,7 +26,10 @@ public class PurchaseOrderController {
     }
 
     @GetMapping
-    public List<PurchaseOrder> all() {
+    public List<PurchaseOrder> all(@RequestParam(required = false) Long vendorId) {
+        if (vendorId != null) {
+            return service.getByVendorId(vendorId);
+        }
         return service.all();
     }
 
