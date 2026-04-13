@@ -11,7 +11,10 @@ import com.mywaysai.smartprocurementvendormanagementsystem.entity.Vendor;
 import com.mywaysai.smartprocurementvendormanagementsystem.repository.DepartmentRepository;
 import com.mywaysai.smartprocurementvendormanagementsystem.repository.RoleRepository;
 import com.mywaysai.smartprocurementvendormanagementsystem.repository.VendorRepository;
+import com.mywaysai.smartprocurementvendormanagementsystem.security.JwtService;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.mywaysai.smartprocurementvendormanagementsystem.entity.User;
 import com.mywaysai.smartprocurementvendormanagementsystem.repository.UserRepository;
@@ -25,8 +28,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepository repository;
     private final RoleRepository roleRepository;
     private final DepartmentRepository  departmentRepository;
-
     private final VendorRepository vendorRepository;
+    private final JwtService jwtService;
     @Override
     public User save(User user) {
         return null;
@@ -89,40 +92,39 @@ public class UserServiceImpl implements UserService {
     public LoginResponse login(LoginRequest request) {
 
         User user = repository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"));
 
         if (!user.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Invalid password");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
         }
 
         if (user.getRole() == null) {
             throw new RuntimeException("User role not assigned");
         }
 
-        //  CHECK ONLY IF ROLE = VENDOR
-        if (user.getRole().getRoleName().equalsIgnoreCase("VENDOR")) {
+        Long vendorId = null;
 
+        // CHECK ONLY IF ROLE = VENDOR
+        if (user.getRole().getRoleName().equalsIgnoreCase("VENDOR")) {
             Optional<Vendor> optionalVendor = vendorRepository.findByEmail(user.getEmail());
 
-            // If vendor record exists → it is outside registered vendor
-            if (optionalVendor.isPresent()) {//
-
+            if (optionalVendor.isPresent()) {
                 Vendor vendor = optionalVendor.get();
 
                 if (!vendor.isApproved()) {
                     throw new RuntimeException("Vendor not approved by admin yet");
                 }
+
+                vendorId = vendor.getId();
             }
 
-            // If NOT present → it means admin created vendor user
-            // So allow login
+            // If NOT present → it means admin created vendor user, so login is allowed
         }
 
         return new LoginResponse(
-
-                "dummy-token",
+                jwtService.generateToken(user),
                 user.getRole().getRoleName(),
-
+                vendorId,
                 user.getId()
         );
     }

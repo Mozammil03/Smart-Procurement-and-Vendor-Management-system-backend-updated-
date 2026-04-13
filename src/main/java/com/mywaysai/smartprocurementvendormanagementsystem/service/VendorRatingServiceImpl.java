@@ -18,11 +18,17 @@ package com.mywaysai.smartprocurementvendormanagementsystem.service;
 //    }
 //
 import com.mywaysai.smartprocurementvendormanagementsystem.dto.VendorRatingRequest;
+import com.mywaysai.smartprocurementvendormanagementsystem.entity.User;
 import com.mywaysai.smartprocurementvendormanagementsystem.entity.Vendor;
 import com.mywaysai.smartprocurementvendormanagementsystem.entity.VendorRating;
+import com.mywaysai.smartprocurementvendormanagementsystem.repository.UserRepository;
 import com.mywaysai.smartprocurementvendormanagementsystem.repository.VendorRatingRepository;
 import com.mywaysai.smartprocurementvendormanagementsystem.repository.VendorRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -38,24 +44,47 @@ import java.util.List;
             this.vendorRepository = vendorRepository;
         }
 
+        @Autowired
+        UserRepository userRepository;
+
         @Override
         public VendorRating createRating(VendorRatingRequest request) {
 
+            if (request == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request body is required");
+            }
+            if (request.getVendorId() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "vendorId is required");
+            }
+            if (request.getRatedByUserId() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "ratedByUserId is required");
+            }
+
             Vendor vendor = vendorRepository.findById(request.getVendorId())
-                    .orElseThrow(() -> new RuntimeException("Vendor not found"));
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Vendor not found"));
+
+            User user = userRepository.findById(request.getRatedByUserId())
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "User not found"));
 
             VendorRating rating = new VendorRating();
             rating.setVendor(vendor);
+            rating.setRatedBy(user);
             rating.setQualityScore(request.getQualityScore());
             rating.setDeliveryScore(request.getDeliveryScore());
             rating.setPriceScore(request.getPriceScore());
+            rating.setComments(request.getComments());
+            rating.setIsAdminRating(request.getIsAdminRating() != null ? request.getIsAdminRating() : true);
 
             return ratingRepository.save(rating);
         }
-
         @Override
         public List<VendorRating> getAllRatings() {
             return ratingRepository.findAll();
+        }
+
+        @Override
+        public List<VendorRating> getRatingsByVendorId(Long vendorId) {
+            return ratingRepository.findByVendorId(vendorId);
         }
 
         @Override
@@ -66,7 +95,13 @@ import java.util.List;
 
         @Override
         public VendorRating rate(VendorRating rating) {
-            return null;
+            return ratingRepository.save(rating);
+        }
+
+        @Override
+        @Transactional
+        public void deleteRatingsByVendorId(Long vendorId) {
+            ratingRepository.deleteByVendorId(vendorId);
         }
     }
 

@@ -7,6 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
+import com.mywaysai.smartprocurementvendormanagementsystem.entity.User;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter
@@ -22,4 +26,14 @@ public class VendorRating {
 
     @ManyToOne
     private Vendor vendor;
+
+    @ManyToOne
+    private User ratedBy;
+
+    private String comments;
+
+    private Boolean isAdminRating;
+
+    @CreationTimestamp
+    private LocalDateTime ratedAt;
 }

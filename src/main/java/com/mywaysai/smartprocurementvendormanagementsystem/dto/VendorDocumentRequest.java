@@ -5,6 +5,7 @@ import lombok.Data;
 public class VendorDocumentRequest {
 
         private Long vendorId;
+        private String documentName;
         private String documentType;
         private String documentNumber;
 

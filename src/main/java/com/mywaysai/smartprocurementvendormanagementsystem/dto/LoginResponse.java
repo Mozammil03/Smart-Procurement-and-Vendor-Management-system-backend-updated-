@@ -18,15 +18,21 @@ package com.mywaysai.smartprocurementvendormanagementsystem.dto;
 //}
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginResponse {
 
     private String token;
     private String role;
-    private Long id;   // ADDED
+    private Long vendorId;
 
-    public LoginResponse(String token, String role, Long id) {
+    @JsonProperty("id")
+    private Long id;
+
+    public LoginResponse(String token, String role, Long vendorId, Long id) {
         this.token = token;
         this.role = role;
+        this.vendorId = vendorId;
         this.id = id;
     }
 
@@ -38,7 +44,11 @@ public class LoginResponse {
         return role;
     }
 
-    public Long getId() {   //  ADDED
+    public Long getVendorId() {
+        return vendorId;
+    }
+
+    public Long getId() {
         return id;
     }
 }

@@ -15,9 +15,13 @@ public class VendorDocument {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String documentName;
     private String documentType;
     private String documentNumber;
+    private String status;
+    private String adminComment;
 
     @ManyToOne
     private Vendor vendor;
 }
+

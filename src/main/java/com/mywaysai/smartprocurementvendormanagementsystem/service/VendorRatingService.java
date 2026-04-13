@@ -10,8 +10,12 @@ public interface VendorRatingService {
 
     List<VendorRating> getAllRatings();
 
+    List<VendorRating> getRatingsByVendorId(Long vendorId);
+
     VendorRating getRatingById(Long id);
 
     VendorRating rate(VendorRating rating);
+
+    void deleteRatingsByVendorId(Long vendorId);
 }
 
