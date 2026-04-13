@@ -89,15 +89,17 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/po/**").hasRole("ADMIN")
                         
                         // Purchase Order endpoints
-                        .requestMatchers(HttpMethod.GET, "/po", "/po/**").hasAnyRole("ADMIN", "VENDOR", "MANAGER", "FINANCE")
+                        .requestMatchers(HttpMethod.GET, "/po", "/po/**").hasAnyRole("ADMIN", "VENDOR", "MANAGER", "FINANCE", "EMPLOYEE")
                         .requestMatchers(HttpMethod.GET, "/requisitions/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
                         
                         // Employee endpoints
                         .requestMatchers(HttpMethod.POST, "/requisitions").hasRole("EMPLOYEE")
                         .requestMatchers(HttpMethod.PUT, "/requisitions/**").hasRole("EMPLOYEE")
                         
+                        // Approvals endpoint for employee and manager tracking
+                        .requestMatchers(HttpMethod.GET, "/approvals", "/approvals/**").hasAnyRole("ADMIN", "MANAGER", "EMPLOYEE")
+                        
                         // Manager endpoints
-                        .requestMatchers("/approvals/**").hasRole("MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/requisitions/**").hasAnyRole("MANAGER", "EMPLOYEE")
                         
                         // Finance endpoints
@@ -118,7 +120,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/vendor-ratings").hasRole("ADMIN")
                         
                         // Delivery endpoints
-                        .requestMatchers("/api/deliveries/**").hasAnyRole("VENDOR", "ADMIN")
+                        .requestMatchers("/api/deliveries/**").hasAnyRole("VENDOR", "ADMIN", "EMPLOYEE")
                         
                         // Default: any other request requires authentication
                         .anyRequest().authenticated()
