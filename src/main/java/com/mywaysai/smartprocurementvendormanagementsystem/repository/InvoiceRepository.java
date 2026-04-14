@@ -18,12 +18,12 @@
 
 package com.mywaysai.smartprocurementvendormanagementsystem.repository;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.mywaysai.smartprocurementvendormanagementsystem.entity.Invoice;
 
 public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
-    Optional<Invoice> findByPurchaseOrderId(Long purchaseOrderId);
+    List<Invoice> findByPurchaseOrderId(Long purchaseOrderId);
 }

@@ -91,8 +91,8 @@ public class ReportService {
             dto.setVendorName(po.getVendor() != null ? po.getVendor().getCompanyName() : "");
             dto.setPoStatus(po.getStatus());
 
-            Optional<Invoice> invoiceOpt = invoiceRepository.findByPurchaseOrderId(po.getId());
-            invoiceOpt.ifPresent(inv -> {
+            List<Invoice> invoices = invoiceRepository.findByPurchaseOrderId(po.getId());
+            invoices.stream().findFirst().ifPresent(inv -> {
                 dto.setInvoiceNumber(inv.getInvoiceNumber());
                 dto.setInvoiceAmount(inv.getAmount());
 
